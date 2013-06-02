@@ -4,6 +4,13 @@
 This library analyzes JavaScript code and returns all the public interfaces exposed at runtime.
 
 
+##Install
+
+`npm install public.js`
+
+Browser-based version may be available in the future.
+
+
 ##Example
 
 ```
