@@ -14,16 +14,37 @@ Browser-based version may be available in the future.
 ##Example
 
 ```
-var backboneStr = <string representation of backbone.js source>;
-var underscoreStr = <string representation of underscore.js source>;
+/* this is the code we want to analyze
+
+function pattern1(param){
+
+    function pattern1Private(){
+        return "should not be testable";
+    }
+
+    return param;
+}
+var pattern1Variable = "testable";
+
+*/
+var inputStr = <string representation of code to analyze>;
+
 
 var output = publicjs.getPublic(backboneStr,{
         dependencies: [underscoreStr],
         tree: true
       });
+console.log(output);
 ```
 
-In this example, publicjs will return a tree representing the global `Backbone` object exposed when Backbone.js is used.  This tree will list all the properties and functions exposed by the `Backbone` object.
+Result: 
+```
+[ 
+  { name: 'pattern1', type: 'function', parameters: [{ name: 'param' }] },
+  { name: 'pattern1Variable', type: 'string', value: 'testable' } 
+]
+```  
+
 
 
 ##Applications
