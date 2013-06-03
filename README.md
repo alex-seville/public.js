@@ -28,7 +28,7 @@ In this example, publicjs will return a tree representing the global `Backbone` 
 
 ##Applications
 
-1. Automated unit test scaffolding: The tree returned by publicjs could be parsed and used to automatically create unit test cases based on the publically exposed functions.
+1. Automated unit test scaffolding: The tree returned by publicjs could be parsed and used to automatically create unit test cases based on the publically exposed functions.  See example at [Scaffold.js](#https://github.com/alex-seville/scaffold.js).
 
 2. Code security: Add publicjs to your build process to ensure that only the functionality that should be exposed publically by your code is, and that private functions are not accessible.
 
