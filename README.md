@@ -53,4 +53,4 @@ Result:
 
 2. Code security: Add publicjs to your build process to ensure that only the functionality that should be exposed publically by your code is, and that private functions are not accessible.
 
-3. Code documentation: The interface tree could be parsed to automatically generate documentation for public methods.
+3. Code documentation: The interface tree could be parsed to automatically generate documentation for public methods.  See example at [Scaffold.js](https://github.com/alex-seville/scaffold.js).
