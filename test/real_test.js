@@ -4,13 +4,15 @@ var publicjs = require("../public"),
     backbone = __dirname + "/fixtures/backbone.js",
     bootstrap_alert = __dirname + "/fixtures/bootstrap-alert.js",
     jquery = __dirname + "/fixtures/jquery.js",
+    requirejs = __dirname + "/fixtures/require.js",
     fs = require("fs"),
     underscoreFile = fs.readFileSync(underscore).toString(),
     backboneFile = fs.readFileSync(backbone).toString(),
     bootstrapAlertFile = fs.readFileSync(bootstrap_alert).toString(),
-    jqueryFile = fs.readFileSync(jquery).toString();
+    jqueryFile = fs.readFileSync(jquery).toString(),
+    requirejsFile = fs.readFileSync(requirejs).toString();
 
-
+/*
 describe('non dep', function(){
     it('should find the globals', function(){
       var output = publicjs.getPublic(underscoreFile);
@@ -24,8 +26,25 @@ describe('non dep', function(){
       assert.equal(output[0].children[0].name === "VERSION",true);
      
     });
-});
+});*/
 
+describe('non dep requirejs', function(){
+    it('should find the globals', function(){
+      var output = publicjs.getPublic(requirejsFile);
+      
+      assert.equal(typeof output["require"] !== 'undefined',true);
+      assert.equal(typeof output["requirejs"] !== 'undefined',true);
+      assert.equal(typeof output["define"] !== 'undefined',true);
+      
+      output = publicjs.getPublic(requirejsFile,{ tree: true });
+
+      assert.equal(output[0].name === "define",true);
+      assert.equal(output[0].name === "require",true);
+      assert.equal(output[0].name === "requirejs",true);
+     
+    });
+});
+/*
 describe('with dep', function(){
     it('should find the globals', function(){
       var output = publicjs.getPublic(backboneFile,{
@@ -84,3 +103,4 @@ describe('with dep and include', function(){
      
     });
 });
+*/
