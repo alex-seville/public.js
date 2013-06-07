@@ -24,59 +24,7 @@ if (typeof window === 'undefined'){
  }
 
 
-var makeTree = function(obj){
-    var tree=[];
-    
-    if (!obj){
-        return;
-    }
-    //slow search to see if we've already seen this object
-    //to avoid infinite recursion
-    for(var i=0;i<seen.length;i++){
-        if (seen[i] == obj){
-            tree.push({circular: true});
-            return;
-        }
-    }
-    
-    if (obj != {}){
-        seen.push(obj);
-    }
 
-    var keys = Object.keys(obj);
-    console.log("loop:",keys);
-    keys.forEach(function(key){
-        console.log("Key:",key);
-        if (key === "_eventDefaults"){
-            console.log("ED:",obj[key]);
-        }
-        var newobj = {
-            name: key,
-            type: typeof obj[key]
-        };
-        if (typeof obj[key] === 'object'){
-            newobj.children = makeTree(obj[key]);
-        }else if (typeof obj[key] === 'function'){
-            newobj.params = parseFunction(obj[key].toString());
-            if (Object.keys(obj[key]).length > 0){
-                newobj.children = makeTree(obj[key]);
-            }
-            if (obj[key].prototype && 
-                typeof obj[key].prototype === 'object' &&
-                obj[key].prototype.constructor.toString().indexOf("[native code]") === -1){
-                if (Object.keys(obj[key].prototype).length > 0){
-                    newobj.prototype = makeTree(obj[key].prototype);
-                }
-            }
-        }else{
-            newobj.value = obj[key];
-        }
-        tree.push(newobj);
-    });
-    console.log("continuing");
-
-    return tree;
-};
 
 var parseFunction = function(fcn){
     try{
@@ -92,7 +40,62 @@ var parseFunction = function(fcn){
 exportVar.getPublic = function(script,options){
     var options = options || {},
         keys,newKeys,win,outputObj,included=[],
-        offset,newVarSplit,createVar,currentObj,currentWindow;
+        offset,newVarSplit,createVar,currentObj,currentWindow,seen;
+
+        var makeTree = function(obj){
+            var tree=[],val;
+            
+            if (!obj){
+                return;
+            }
+            //slow search to see if we've already seen this object
+            //to avoid infinite recursion
+            for(var i=0;i<seen.length;i++){
+                if (seen[i] == obj){
+                    tree.push({circular: true});
+                    return;
+                }
+            }
+            
+            if (obj != {}){
+                seen.push(obj);
+            }
+
+            var keys = Object.keys(obj);
+            
+            keys.forEach(function(key){
+                try{
+                    val = obj[key];
+                    var newobj = {
+                        name: key,
+                        type: typeof val
+                    };
+                    if (typeof val === 'object'){
+                        newobj.children = makeTree(val);
+                    }else if (typeof val === 'function'){
+                        newobj.params = parseFunction(val.toString());
+                        if (Object.keys(val).length > 0){
+                            newobj.children = makeTree(val);
+                        }
+                        if (val.prototype && 
+                            typeof val.prototype === 'object' &&
+                            val.prototype.constructor.toString().indexOf("[native code]") === -1){
+                            if (Object.keys(val.prototype).length > 0){
+                                newobj.prototype = makeTree(val.prototype);
+                            }
+                        }
+                    }else{
+                        newobj.value = val;
+                    }
+                    tree.push(newobj);
+                }catch(e){
+                    if (options.accessorErrors){
+                        throw new Error("Accessor error on "+key+" of "+obj);
+                    }
+                }   
+            });
+            return tree;
+        };
 
     //create the window
     win = typeof window !== 'undefined' ? window : jsdom().createWindow();
@@ -125,7 +128,13 @@ exportVar.getPublic = function(script,options){
 
     newKeys.forEach(function(k){
         if (keys.indexOf(k) === -1){
-            outputObj[k] = win[k];
+            try{
+                outputObj[k] = win[k];
+            }catch(e){
+                if (options.accessorErrors){
+                    throw new Error("Accessor error on "+k+" of "+win);
+                }
+            }  
         }else if (included.indexOf(k) > -1){
             offset = included.indexOf(k);
             //now we need to include the variable listed in
@@ -139,7 +148,13 @@ exportVar.getPublic = function(script,options){
                     currentObj[s]={};
                 }
                 currentObj = currentObj[s];
-                currentWindow = currentWindow[s];
+                try{
+                    currentWindow = currentWindow[s];
+                }catch(e){
+                    if (options.accessorErrors){
+                        throw new Error("Accessor error on "+s+" of "+currentWindow);
+                    }
+                }
             });
             currentObj[createVar]=currentWindow[createVar];
         }

@@ -12,7 +12,7 @@ var publicjs = require("../public"),
     jqueryFile = fs.readFileSync(jquery).toString(),
     requirejsFile = fs.readFileSync(requirejs).toString();
 
-/*
+
 describe('non dep', function(){
     it('should find the globals', function(){
       var output = publicjs.getPublic(underscoreFile);
@@ -26,7 +26,7 @@ describe('non dep', function(){
       assert.equal(output[0].children[0].name === "VERSION",true);
      
     });
-});*/
+});
 
 describe('non dep requirejs', function(){
     it('should find the globals', function(){
@@ -37,14 +37,14 @@ describe('non dep requirejs', function(){
       assert.equal(typeof output["define"] !== 'undefined',true);
       
       output = publicjs.getPublic(requirejsFile,{ tree: true });
-
-      assert.equal(output[0].name === "define",true);
-      assert.equal(output[0].name === "require",true);
+     
+      assert.equal(output[2].name === "define",true);
+      assert.equal(output[1].name === "require",true);
       assert.equal(output[0].name === "requirejs",true);
      
     });
 });
-/*
+
 describe('with dep', function(){
     it('should find the globals', function(){
       var output = publicjs.getPublic(backboneFile,{
@@ -103,4 +103,3 @@ describe('with dep and include', function(){
      
     });
 });
-*/
