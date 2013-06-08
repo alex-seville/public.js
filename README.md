@@ -5,6 +5,8 @@ This library analyzes JavaScript code and returns all the public interfaces expo
 
 See live demo at: http://alex-seville.github.io/public.js/
 
+See applications at: https://github.com/alex-seville/grunt-public-js
+
 
 ##Install
 
@@ -51,8 +53,10 @@ Result:
 
 ##Applications
 
-1. Automated unit test scaffolding: The tree returned by publicjs could be parsed and used to automatically create unit test cases based on the publically exposed functions.  See example at [Scaffold.js](https://github.com/alex-seville/scaffold.js).
+See [grunt-public-js](https://github.com/alex-seville/grunt-public-js) for sample implementations of this applications.
+
+1. Automated unit test scaffolding: The tree returned by publicjs could be parsed and used to automatically create unit test cases based on the publically exposed functions. 
 
 2. Code security: Add publicjs to your build process to ensure that only the functionality that should be exposed publically by your code is, and that private functions are not accessible.
 
-3. Code documentation: The interface tree could be parsed to automatically generate documentation for public methods.  See example at [Scaffold.js](https://github.com/alex-seville/scaffold.js).
+3. Code documentation: The interface tree could be parsed to automatically generate documentation for public methods.  
