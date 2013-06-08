@@ -1,0 +1,13 @@
+{
+  "name": "public.js",
+  "version": "0.0.1",
+  "main": "public.js",
+  "ignore": [
+    "node_modules",
+    "test",
+    ".gitignore",
+    "jslint.js",
+    "package.json",
+    "test.html"
+  ]
+}

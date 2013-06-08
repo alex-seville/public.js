@@ -1,7 +1,7 @@
 ### Public.js
 
 
-This library analyzes JavaScript code and returns all the public interfaces exposed at runtime.
+This library analyzes JavaScript code and returns all the public interfaces exposed at runtime.  Works on node and in the browser.
 
 See live demo at: http://alex-seville.github.io/public.js/
 
@@ -10,9 +10,9 @@ See applications at: https://github.com/alex-seville/grunt-public-js
 
 ##Install
 
-`npm install public.js`
+Node: `npm install public.js`
 
-Browser-based version may be available in the future.
+Browser: `bower install public.js`
 
 
 ##Example
