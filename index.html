@@ -43,6 +43,18 @@
           
 
 <p>Enter your script into the source window, choose a output type, and hit 'convert' to see the result.</p>
+<p>Here are some examples you can copy & paste:</p>
+<ul>
+    <li>
+        <a href="http://requirejs.org/docs/release/2.1.6/minified/require.js">require.js</a>
+    </li>
+    <li>
+        <a href="http://code.jquery.com/jquery-1.10.1.js">jQuery</a>
+    </li>
+    <li>
+        <a href="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js">angular.js</a>
+    </li>
+</ul>
 
 <p>Source:</p>
 <textarea id="source"></textarea>
@@ -79,9 +91,9 @@
     <% if(fcn.type == 'object') { %>
 module('<%= fcn.name %>');<br>
         <% _.each(fcn.children, function(fcn2) { %>
-test('<%= fcn.name %>.<%= fcn2.name %>',function(){
-    &nbsp;&nbsp;ok(<%= fcn.name %>.<%= fcn2.name %><% if(fcn2.params && fcn2.params.length > 0){ %>(<% _.each(fcn2.params, function(fcn3) { %><%= fcn3.name %>,<% }); %>)<% } %> == null,"passed");<br>
-});<br>
+&nbsp;&nbsp;test('<%= fcn.name %>.<%= fcn2.name %>',function(){<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;ok(<%= fcn.name %>.<%= fcn2.name %><% if(fcn2.params && fcn2.params.length > 0){ %>(<% _.each(fcn2.params, function(fcn3) { %><%= fcn3.name %>,<% }); %>)<% } %> == null,"passed");<br>
+&nbsp;&nbsp;});<br>
         <% }); %>
     <% }else{ %>
 test('<%= fcn.name %>',function(){<br>
@@ -102,8 +114,8 @@ test('<%= fcn.name %>.<%= fcn2.name %>',function(){<br>
 <h3><%= fcn.name %></h3>
 
         <% _.each(fcn.children, function(fcn2) { %>
-<h4><%= fcn2.name %></h4>  <i><%= fcn.name %>.<%= fcn2.name %><% if(fcn2.params){ %>(<% _.each(fcn2.params, function(fcn3) { %><%= fcn3.name %>, <% }); %>)<% } %></i>
-<p>Blurb about this function. You complete this yourself.</p>
+<h4>&nbsp;&nbsp;<%= fcn2.name %></h4>  <i>&nbsp;&nbsp;<%= fcn.name %>.<%= fcn2.name %><% if(fcn2.params){ %>(<% _.each(fcn2.params, function(fcn3) { %><%= fcn3.name %>, <% }); %>)<% } %></i>
+<p>&nbsp;&nbsp;Blurb about this function. You complete this yourself.</p>
 <% }); %>
     <% }else{ %>
 <h4><%= fcn.name %></h4>  <i><%= fcn.name %><% if(fcn.params){ %>(<% _.each(fcn.params, function(fcn3) { %><%= fcn3.name %>, <% }); %>)<% } %></i>
