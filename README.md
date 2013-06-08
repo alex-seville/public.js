@@ -3,6 +3,8 @@
 
 This library analyzes JavaScript code and returns all the public interfaces exposed at runtime.
 
+See live demo at: http://alex-seville.github.io/public.js/
+
 
 ##Install
 
