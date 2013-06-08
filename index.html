@@ -13,7 +13,7 @@
     <style>
 #results{
     width:600px;
-    height:200px;
+    margin-bottom: 20px;
 }
 #source{ 
     width:600px;
@@ -42,15 +42,20 @@
         <section id="main_content">
           
 
-<p>Enter your script into the source window and hit 'convert' to generate unit tests.</p>
+<p>Enter your script into the source window, choose a output type, and hit 'convert' to see the result.</p>
 
 <p>Source:</p>
 <textarea id="source"></textarea>
 
-<p><button onclick="loadUrl()">Convert</button></p>
+<p>Output type: <select id="outType">
+<option value="1">QUnit test scaffold</option>
+<option value="2">Documentation</option>
+<option value="3">Object linting</option>
+<option value="4">Public.js parse tree</option>
+</select><button onclick="loadUrl()">Convert</button></p>
 
 <p><span id='resultLabel'>Result:</span></p>
-<textarea id="results" ></textarea>
+<div id="results" ><p style="color:#aaa">Enter source code and hit 'convert' to see a result</p></div>
 
 
         </section>
@@ -69,40 +74,118 @@
       </div>
     </div>
     <script id="qunit_template" type="text/template">
-//Qunit test scaffolding
+<h3>//Qunit test scaffolding</h3>
 <% _.each(data, function(fcn) { %>
     <% if(fcn.type == 'object') { %>
-module('<%= fcn.name %>');
+module('<%= fcn.name %>');<br>
         <% _.each(fcn.children, function(fcn2) { %>
 test('<%= fcn.name %>.<%= fcn2.name %>',function(){
-    ok(<%= fcn.name %>.<%= fcn2.name %><% if(fcn2.params && fcn2.params.length > 0){ %>(<% _.each(fcn2.params, function(fcn3) { %><%= fcn3.name %>,<% }); %>)<% } %> == null,"passed");
-});
+    &nbsp;&nbsp;ok(<%= fcn.name %>.<%= fcn2.name %><% if(fcn2.params && fcn2.params.length > 0){ %>(<% _.each(fcn2.params, function(fcn3) { %><%= fcn3.name %>,<% }); %>)<% } %> == null,"passed");<br>
+});<br>
         <% }); %>
     <% }else{ %>
-test('<%= fcn.name %>',function(){
-    ok(<%= fcn.name %><% if(fcn.params && fcn.params.length > 0){ %>(<% _.each(fcn.params, function(fcn3) { %><%= fcn3.name %>,<% }); %>)<% } %> == null,"passed");
-});
+test('<%= fcn.name %>',function(){<br>
+    &nbsp;&nbsp;ok(<%= fcn.name %><% if(fcn.params && fcn.params.length > 0){ %>(<% _.each(fcn.params, function(fcn3) { %><%= fcn3.name %>,<% }); %>)<% } %> == null,"passed");<br>
+});<br>
+        <div style='margin-left:20px'><% _.each(fcn.children, function(fcn2) { %>
+test('<%= fcn.name %>.<%= fcn2.name %>',function(){<br>
+    &nbsp;&nbsp;ok(<%= fcn.name %>.<%= fcn2.name %><% if(fcn2.params && fcn2.params.length > 0){ %>(<% _.each(fcn2.params, function(fcn3) { %><%= fcn3.name %>,<% }); %>)<% } %> == null,"passed");<br>
+});<br>
+                <% }); %></div>
+    <% } %>
+<% }); %>
+</script>
+<script id="doc_template" type="text/template">
+<h3>Documentation</h3>
+<% _.each(data, function(fcn) { %>
+    <% if(fcn.type == 'object') { %>
+<h3><%= fcn.name %></h3>
+
         <% _.each(fcn.children, function(fcn2) { %>
-test('<%= fcn.name %>.<%= fcn2.name %>',function(){
-    ok(<%= fcn.name %>.<%= fcn2.name %><% if(fcn2.params && fcn2.params.length > 0){ %>(<% _.each(fcn2.params, function(fcn3) { %><%= fcn3.name %>,<% }); %>)<% } %> == null,"passed");
-});
-                <% }); %>
+<h4><%= fcn2.name %></h4>  <i><%= fcn.name %>.<%= fcn2.name %><% if(fcn2.params){ %>(<% _.each(fcn2.params, function(fcn3) { %><%= fcn3.name %>, <% }); %>)<% } %></i>
+<p>Blurb about this function. You complete this yourself.</p>
+<% }); %>
+    <% }else{ %>
+<h4><%= fcn.name %></h4>  <i><%= fcn.name %><% if(fcn.params){ %>(<% _.each(fcn.params, function(fcn3) { %><%= fcn3.name %>, <% }); %>)<% } %></i>
+
+<p>Blurb about this function. You complete this yourself</p>
+<div style='margin-left:20px'><% _.each(fcn.children, function(fcn2) { %>
+<h5><%= fcn2.name %></h5>  <i><%= fcn.name %>.<%= fcn2.name %><% if(fcn2.params){ %>(<% _.each(fcn2.params, function(fcn3) { %><%= fcn3.name %>, <% }); %>)<% } %></i>
+<p>Blurb about this function. You complete this yourself.</p>
+<% }); %>
+</div>
     <% } %>
 <% }); %>
 </script>
 
+<script id="tree_template" type="text/template">
+<h3>Parse Tree</h3>
+[<% _.each(data, function(fcn) { %>
+<br><span>&nbsp;&nbsp;{ name: '<%= fcn.name %>',</span><br>
+<span>&nbsp;&nbsp;&nbsp;&nbsp;type: '<%= fcn.type %>',</span>
+    <% if (typeof fcn.children !== 'undefined'){ %>
+<br><span>&nbsp;&nbsp;&nbsp;&nbsp;children: [<% _.each(fcn.children, function(fcn2) { %>
+<br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ name: '<%= fcn2.name %>',</span><br>
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type: '<%= fcn2.type %>' },</span>
+        <% }); %>
+<br><span>&nbsp;&nbsp;&nbsp;&nbsp;]
+    <% } %> 
+<br><span>&nbsp;&nbsp;},</span>
+<% }); %>
+<br>]<br><br>
+<p>NOTE: Only two levels deep are displayed in this demo</p>
+<br>
+</script>
 
 <script>
-function loadUrl(){
+var cache={};
+function trim1 (str) {
+    return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+}
 
-    var obj = publicjs.getPublic(
-        document.getElementById('source').value,
-        {
-            tree:true,
-            accessorErrors:true
-        });
-    var tests = _.template(document.getElementById('qunit_template').innerHTML);
-    document.getElementById('results').value = tests({data: obj});
+function loadUrl(){
+    var obj,output,errors=[],source = trim1(document.getElementById('source').value);
+    if (cache.s === source){
+        obj = cache.o;
+        errors = cache.e;
+    }else{
+        cache.s = source;
+        cache.o = publicjs.getPublic(
+            source,
+            {
+                tree:true,
+                errorCallback: function(name,details){
+                    errors.push({ k: name, v: details });
+                  }
+            });
+        obj = cache.o;
+        cache.e = errors;
+    }
+    var type = document.getElementById('outType').value;
+    if (type === "1"){
+        output = (_.template(document.getElementById('qunit_template').innerHTML))({data: obj});
+        
+    }else if (type === "2"){
+        output = (_.template(document.getElementById('doc_template').innerHTML))({data: obj});
+        
+    }else if (type === "3"){
+        if (errors.length > 0){
+            output = "<h3>Public-Lint errors found:</h3>";
+            errors.forEach(function(e){
+                output+= "<p>Accessor error from "+e.v+"."+e.k+"</p>";
+            });
+        }else{
+            output = "<h3>Public-Lint completed successfully.</h3><p>If you want to see it fail, try running this code:</p><br>";
+            output += "var pattern1={};<br>";
+            output += "Object.defineProperty(pattern1,'iWillCrashYou', {<br>";
+            output += " get: function () { throw new Error('bwuahahah!'); },<br>";
+            output += " enumerable: true<br>";
+            output += "});<br>";
+        }
+    }else if (type === "4"){
+        output = (_.template(document.getElementById('tree_template').innerHTML))({data: obj});
+    }
+    document.getElementById('results').innerHTML = output;
 }
 </script>
 
