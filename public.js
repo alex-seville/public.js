@@ -55,14 +55,17 @@ exportVar.getPublic = function(script,options){
 
         //if we want accessor errors to fail, we can do that here
         //otherwise they get added to the tree
-        var accessorError = function(name,details){
+        var accessorError = function(name,details,obj){
+            if (typeof options.errorCallback === 'function'){
+                options.errorCallback(name,details,obj);
+            }
             if (options.throwErrors){
                 throw new Error("Accessor error on "+name+" of "+details);
             }
         };
 
         //recursive method for generating parse tree
-        var makeTree = function(obj){
+        var makeTree = function(obj,currentPath){
             var tree=[],val;
             
             if (!obj){
@@ -90,25 +93,30 @@ exportVar.getPublic = function(script,options){
                 }catch(e){
                     //we had a problem accessing the property,
                     //let's handle it
-                    accessorError(key,obj);
+                    accessorError(key,currentPath,obj);
                     tree.push({
                         name: key,
                         type: 'accessor function'
                     });
                     return;
                 } 
+                if (currentPath !== ""){
+                    currentPath += ".";
+                }
+                currentPath = currentPath + key;
                 //create a new leaf
                 var newobj = {
                     name: key,
-                    type: typeof val
+                    type: typeof val,
+                    currentPath: currentPath
                 };
                 if (typeof val === OBJECT){
-                    newobj.children = makeTree(val);
+                    newobj.children = makeTree(val,currentPath);
                 }else if (typeof val === 'function'){
                     //if it's a function we capture the parameters
                     newobj.params = parseFunction(val.toString());
                     if (Object.keys(val).length > 0){
-                        newobj.children = makeTree(val);
+                        newobj.children = makeTree(val,currentPath);
                     }
                     //and we capture anything that's living on the prototype
                     if (val.prototype && 
@@ -118,7 +126,7 @@ exportVar.getPublic = function(script,options){
                           )
                     ){
                         if (Object.keys(val.prototype).length > 0){
-                            newobj.prototype = makeTree(val.prototype);
+                            newobj.prototype = makeTree(val.prototype,currentPath);
                         }
                     }
                 }else{
@@ -166,7 +174,7 @@ exportVar.getPublic = function(script,options){
                 outputObj[k] = win[k];
             }catch(e){
                 //there was an error accessing the property
-                accessorError(k,win);
+                accessorError(k,currentPath,win);
             }  
         }else if (included.indexOf(k) > -1){
             //we need to copy included variables, if present,
@@ -186,7 +194,7 @@ exportVar.getPublic = function(script,options){
                 try{
                     currentWindow = currentWindow[s];
                 }catch(e){
-                    accessorError(s,currentWindow);
+                    accessorError(s,currentPath,currentWindow);
                 }
             });
             currentObj[createVar]=currentWindow[createVar];
@@ -195,7 +203,7 @@ exportVar.getPublic = function(script,options){
     if (options.tree){
         //create and return a tree
         seen=[];
-        return makeTree(outputObj);
+        return makeTree(outputObj,"");
     }
     //otherwise return the new object
     return outputObj;

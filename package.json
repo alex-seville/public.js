@@ -2,7 +2,7 @@
   "author": "alex-seville",
   "name": "public.js",
   "description": "Display the public interfaces for given JavaScript files",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/alex-seville/public.js.git"
