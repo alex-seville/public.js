@@ -17,31 +17,21 @@ Browser: `bower install public.js`
 
 ##Example
 
+Let's say there's a library in use on a site, but there are no tests written against, no documentation, and limited time/budget to fully analyze the code.  However, some refactoring is required and you want to ensure that the changes cause as few regressions as possible.
+
+With the library file, a list of the dependencies, and public.js you can develop scaffold for unit tests, barebones documentation, and even quickly analyze the code for errors accessing object properties.
+
+It's as easy as:
+
 ```
-/* this is the code we want to analyze
-
-function pattern1(param){
-
-    function pattern1Private(){
-        return "should not be testable";
-    }
-
-    return param;
-}
-var pattern1Variable = "testable";
-
-*/
-var inputStr = <string representation of code to analyze>;
-
-
-var output = publicjs.getPublic(backboneStr,{
-        dependencies: [underscoreStr],
+var output = publicjs.getPublic(<source code of library>,{
+        dependencies: [<array of dependency source code>],
         tree: true
       });
-console.log(output);
 ```
+The value of output will be a parse tree, similar to the sample below.  This tree can be applied against a template to generate tests or documentation.
 
-Result: 
+Sample parse tree: 
 ```
 [ 
   { name: 'pattern1', type: 'function', parameters: [{ name: 'param' }] },
@@ -53,10 +43,10 @@ Result:
 
 ##Applications
 
-See [grunt-public-js](https://github.com/alex-seville/grunt-public-js) for sample implementations of this applications.
+See [grunt-public-js](https://github.com/alex-seville/grunt-public-js) for sample implementations of the following applications:
 
-1. Automated unit test scaffolding: The tree returned by publicjs could be parsed and used to automatically create unit test cases based on the publically exposed functions. 
+1. Automated unit test scaffolding - The tree returned by public.js could be parsed and used to automatically create unit test cases based on the publicly exposed functions. 
 
-2. Code security: Add publicjs to your build process to ensure that only the functionality that should be exposed publically by your code is, and that private functions are not accessible.
+2. Code security - Add public.js to your build process to ensure that only the functionality that should be exposed publicly by your code is, and that private functions are not accessible.
 
-3. Code documentation: The interface tree could be parsed to automatically generate documentation for public methods.  
+3. Code documentation - The interface tree could be parsed to automatically generate documentation for public methods.  
