@@ -129,6 +129,10 @@ test('<%= fcn.name %>.<%= fcn3.name %>',function(){<br>
 <h5><%= fcn2.name %></h5>  <i><%= fcn.name %>.<%= fcn2.name %><% if(fcn2.params){ %>(<% _.each(fcn2.params, function(fcn3) { %><%= fcn3.name %>, <% }); %>)<% } %></i>
 <p>Blurb about this function. You complete this yourself.</p>
 <% }); %>
+<% _.each(fcn.prototype, function(fcn3) { %>
+<h5><%= fcn.name %>.<%= fcn3.name %></h5><i><%= fcn.name %>.<%= fcn3.name %><% if(fcn3.params && fcn3.params.length > 0){ %>(<% _.each(fcn3.params, function(fcn4) { %><%= fcn4.name %>,<% }); %>)<% } %> </i>
+<p>Blurb about this function. You complete this yourself.</p>
+                <% }); %>
 </div>
     <% } %>
 <% }); %>
