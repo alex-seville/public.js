@@ -148,12 +148,15 @@ test('<%= fcn.name %>.<%= fcn3.name %>',function(){<br>
 <br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ name: '<%= fcn2.name %>',</span><br>
 <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type: '<%= fcn2.type %>' },</span>
         <% }); %>
-    <% if (typeof fcn.prototype !== 'undefined'){ %>
+<br><span>&nbsp;&nbsp;&nbsp;&nbsp;]
+    <% } %> 
+<br><span>&nbsp;&nbsp;},</span>
+ <% if (typeof fcn.prototype !== 'undefined'){ %>
 <br><span>&nbsp;&nbsp;&nbsp;&nbsp;prototype: [<% _.each(fcn.prototype, function(fcn2) { %>
 <br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ name: '<%= fcn2.name %>',</span><br>
 <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type: '<%= fcn2.type %>' },</span>
         <% }); %>
-<br><span>&nbsp;&nbsp;&nbsp;&nbsp;]
+br><span>&nbsp;&nbsp;&nbsp;&nbsp;]
     <% } %> 
 <br><span>&nbsp;&nbsp;},</span>
 <% }); %>
