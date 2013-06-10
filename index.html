@@ -97,7 +97,7 @@ module('<%= fcn.name %>');<br>
         <% }); %>
     <% }else{ %>
 test('<%= fcn.name %>',function(){<br>
-    &nbsp;&nbsp;ok(<%= fcn.name %><% if(fcn.params && fcn.params.length > 0){ %>(<% _.each(fcn.params, function(fcn3) { %><%= fcn3.name %>,<% }); %>)<% } %> == null,"passed");<br>
+    &nbsp;&nbsp;ok(<%= fcn.name %><% if(fcn.prototype && (!fcn.param || fcn.param.length == 0)){%>()<%}%>  <% if(fcn.params && fcn.params.length > 0){ %>(<% _.each(fcn.params, function(fcn3) { %><%= fcn3.name %>,<% }); %>)<% } %> == null,"passed");<br>
 });<br>
         <div style='margin-left:20px'><% _.each(fcn.children, function(fcn2) { %>
 test('<%= fcn.name %>.<%= fcn2.name %>',function(){<br>
@@ -105,7 +105,7 @@ test('<%= fcn.name %>.<%= fcn2.name %>',function(){<br>
 });<br>
                 <% }); %><% _.each(fcn.prototype, function(fcn3) { %>
 test('<%= fcn.name %>.<%= fcn3.name %>',function(){<br>
-    &nbsp;&nbsp;ok(new <%= fcn.name %>.<%= fcn3.name %><% if(fcn3.params && fcn3.params.length > 0){ %>(<% _.each(fcn3.params, function(fcn4) { %><%= fcn4.name %>,<% }); %>)<% } %> == null,"passed");<br>
+    &nbsp;&nbsp;ok(new <%= fcn.name %>().<%= fcn3.name %><% if(fcn3.params && fcn3.params.length > 0){ %>(<% _.each(fcn3.params, function(fcn4) { %><%= fcn4.name %>,<% }); %>)<% } %> == null,"passed");<br>
 });<br>
                 <% }); %></div>
     <% } %>
