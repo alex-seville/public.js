@@ -105,7 +105,7 @@ test('<%= fcn.name %>.<%= fcn2.name %>',function(){<br>
 });<br>
                 <% }); %><% _.each(fcn.prototype, function(fcn3) { %>
 test('<%= fcn.name %>.<%= fcn3.name %>',function(){<br>
-    &nbsp;&nbsp;ok(new <%= fcn.name %>().<%= fcn3.name %><% if(fcn3.prototype && (!fcn3.param || fcn3.param.length == 0)){%>()<%}%><% if(fcn3.params && fcn3.params.length > 0){ %>(<% _.each(fcn3.params, function(fcn4) { %><%= fcn4.name %>,<% }); %>)<% } %> == null,"passed");<br>
+    &nbsp;&nbsp;ok(new <%= fcn.name %>().<%= fcn3.name %><% if(fcn3.type === 'function' && (!fcn3.param || fcn3.param.length == 0)){%>()<%}%><% if(fcn3.params && fcn3.params.length > 0){ %>(<% _.each(fcn3.params, function(fcn4) { %><%= fcn4.name %>,<% }); %>)<% } %> == null,"passed");<br>
 });<br>
                 <% }); %></div>
     <% } %>
