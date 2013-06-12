@@ -87,6 +87,7 @@ exportVar.getPublic = function(script,options){
             var keys = Object.keys(obj);
             //go through each of the enumerable keys
             keys.forEach(function(key){
+                var newPath = (currentPath !== "" ? currentPath+"." : "") + key;
                 try{
                     //let's see if we can access the property
                     val = obj[key];
@@ -96,27 +97,25 @@ exportVar.getPublic = function(script,options){
                     accessorError(key,currentPath,obj);
                     tree.push({
                         name: key,
-                        type: 'accessor function'
+                        type: 'accessor function',
+                        currentPath: newPath
                     });
                     return;
-                } 
-                if (currentPath !== ""){
-                    currentPath += ".";
                 }
-                currentPath = currentPath + key;
+                
                 //create a new leaf
                 var newobj = {
                     name: key,
                     type: typeof val,
-                    currentPath: currentPath
+                    currentPath: newPath
                 };
                 if (typeof val === OBJECT){
-                    newobj.children = makeTree(val,currentPath);
+                    newobj.children = makeTree(val,newPath);
                 }else if (typeof val === 'function'){
                     //if it's a function we capture the parameters
                     newobj.params = parseFunction(val.toString());
                     if (Object.keys(val).length > 0){
-                        newobj.children = makeTree(val,currentPath);
+                        newobj.children = makeTree(val,newPath);
                     }
                     //and we capture anything that's living on the prototype
                     if (val.prototype && 
@@ -126,7 +125,7 @@ exportVar.getPublic = function(script,options){
                           )
                     ){
                         if (Object.keys(val.prototype).length > 0){
-                            newobj.prototype = makeTree(val.prototype,currentPath);
+                            newobj.prototype = makeTree(val.prototype,newPath);
                         }
                     }
                 }else{
